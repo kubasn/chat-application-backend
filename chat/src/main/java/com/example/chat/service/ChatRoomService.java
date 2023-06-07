@@ -31,7 +31,7 @@ public class ChatRoomService {
         return chatRoomRepository.findAll();
     }
 
-    public ChatRoom getChatRoomById(int id) {
+    public ChatRoom getChatRoomById(String id) {
         Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findById(id);
         return chatRoomOptional.orElse(null);
     }
@@ -41,7 +41,7 @@ public class ChatRoomService {
     }
 
 
-    public ChatRoom updateChatRoom(int id, ChatRoom chatRoom) {
+    public ChatRoom updateChatRoom(String id, ChatRoom chatRoom) {
         ChatRoom existingChatRoom = (ChatRoom) chatRoomRepository.findById(id).orElse(null);
         if (existingChatRoom != null) {
             chatRoom.setRoomId(existingChatRoom.getRoomId());

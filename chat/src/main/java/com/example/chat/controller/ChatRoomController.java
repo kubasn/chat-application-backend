@@ -27,7 +27,7 @@ public class ChatRoomController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getChatRoomById(@PathVariable("id") int id) {
+    public ResponseEntity getChatRoomById(@PathVariable("id") String id) {
         ChatRoom chatRoom = chatRoomService.getChatRoomById(id);
         if (chatRoom != null) {
             return ResponseEntity.ok(chatRoom);
@@ -58,7 +58,7 @@ public class ChatRoomController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ChatRoom> updateChatRoom(@PathVariable int id, @RequestBody ChatRoom chatRoom){
+    public ResponseEntity<ChatRoom> updateChatRoom(@PathVariable String id, @RequestBody ChatRoom chatRoom){
         ChatRoom updatedChatRoom = chatRoomService.updateChatRoom(id,chatRoom);
         if(updatedChatRoom != null){
             return ResponseEntity.ok(updatedChatRoom);
