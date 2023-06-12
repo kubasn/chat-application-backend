@@ -22,7 +22,10 @@ public class UserController {
         this.userService = userService;
     }
 
-
+    @GetMapping
+    public List<User> getUsers() {
+        return userService.getAllUsers();
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity getUserById(@PathVariable String id){
