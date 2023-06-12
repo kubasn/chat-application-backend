@@ -4,20 +4,22 @@ package com.example.chat.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name= "users")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 
 public class User {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String userId;
 
     private String login;
@@ -25,23 +27,17 @@ public class User {
     private String avatarID;
     private String role;
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name="user_chatroom",
-//            joinColumns = @JoinColumn(name="user_id"),
-//            inverseJoinColumns = @JoinColumn(name="room_id")
-//
-//    )
 
     @CollectionTable(name = "user_chatroom",
-            joinColumns = @JoinColumn(name="user_id"))
-            @Column(name="room_id")
-    @ElementCollection private List<String> chatRooms = new ArrayList<>();
+            joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "room_id")
+    @JoinColumn(name = "user_id")
+    @ElementCollection
+    @OnDelete(action = OnDeleteAction.CASCADE)
+
+    private List<String> chatRooms = new ArrayList<>();
 
 
-
-    @OneToMany(mappedBy = "user")
-    List<Message> messages;
 
 
 }

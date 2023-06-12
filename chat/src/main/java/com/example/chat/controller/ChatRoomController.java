@@ -1,8 +1,10 @@
 package com.example.chat.controller;
 
+import com.example.chat.exception.NotFoundException;
 import com.example.chat.model.ChatRoom;
 import com.example.chat.service.ChatRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,9 +72,17 @@ public class ChatRoomController {
 
     @Transactional
     @PutMapping("/{roomId}/users/{userId}")
-    public ResponseEntity addUserToChatRoom(@PathVariable String roomId, @PathVariable String userId){
-        chatRoomService.addUserToChatRoom(userId,roomId);
-        return ResponseEntity.ok().body("User with ID" + userId + " added to ChatRoom with ID " + roomId);
+    public ResponseEntity<String> addUserToChatRoom(@PathVariable String roomId, @PathVariable String userId){
+        try {
+            chatRoomService.addUserToChatRoom(userId, roomId);
+            return ResponseEntity.ok().body("User with ID" + userId + " added to ChatRoom with ID " + roomId);
+
+        } catch (NotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
     }
 
 

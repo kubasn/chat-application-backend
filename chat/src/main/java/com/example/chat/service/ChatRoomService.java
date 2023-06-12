@@ -1,17 +1,20 @@
 package com.example.chat.service;
 
+import com.example.chat.exception.NotFoundException;
 import com.example.chat.model.ChatRoom;
 import com.example.chat.model.User;
 import com.example.chat.repository.ChatRoomRepository;
 import com.example.chat.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 
+@Transactional
 @Service
 public class ChatRoomService {
 
@@ -71,50 +74,31 @@ public class ChatRoomService {
 
 
     public void addUserToChatRoom(String userId, String roomId) {
-        System.out.println(userId);
-        System.out.println(roomId);
-        User user = userRepository.findByUserId(userId).orElse(null);
-        ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElse(null);
-        System.out.println(user.getLogin());
-        System.out.println(chatRoom.getName());
-        user.getChatRooms().add(chatRoom.getRoomId());
-//        chatRoom.getUsers().add(user.getUserId());
-
-
-       userRepository.save(user);
-//       chatRoomRepository.save(chatRoom);
-
-    }
-
-    public boolean removeUserFromChatRoom(String userId , String  roomId){
-        System.out.println(roomId);
-        ChatRoom existingChatRoom = chatRoomRepository.findByRoomId(roomId).orElse(null);
-        User existingUser = userRepository.findByUserId(userId).orElse(null);
-        System.out.println(existingChatRoom);
-        if(existingChatRoom !=null && existingUser !=null){
-
-            List<String> users = existingChatRoom.getUsers();
-            System.out.println(users);
-            users.remove(userId);
-            System.out.println(users);  List<String> userChatRooms = existingUser.getChatRooms();
-//            userChatRooms.remove(roomId);
-//            System.out.println(userChatRooms);
-//            userRepository.updateChatRooms(userChatRooms, userId);
-            chatRoomRepository.updateUsers(users, roomId);
-
-//
-
-            return true;
-
+        User user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("User not found"));
+        ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new NotFoundException("Chat room not found"));
+        if (!user.getChatRooms().contains(chatRoom.getRoomId())) {
+            user.getChatRooms().add(chatRoom.getRoomId());
+            userRepository.save(user);
+        } else {
+            throw new IllegalStateException("User is already in the chat room");
         }
-        System.out.println("ello");
 
-        return false;
+    }
+
+    public void removeUserFromChatRoom(String userId, String roomId) {
+        ChatRoom existingChatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new NotFoundException("Chat room not found"));
+        User existingUser = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("User not found"));
+
+        List<String> toOverride = existingUser.getChatRooms().stream().filter(roomInside -> !Objects.equals(existingChatRoom.getRoomId(),roomInside)).toList();
+        System.out.println("ello");
+        System.out.println(toOverride);
+        System.out.println("ello");
+        existingUser.setChatRooms(toOverride);
+
 
 
     }
 
-//    public boolean leaveRoom(int userId)
 
 
 }
