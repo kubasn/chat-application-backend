@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -20,13 +19,11 @@ public class Message {
     private String content;
     private LocalDateTime creation_date;
 
-    @ManyToOne
-    @JoinColumn(name="user_id", nullable= false)
-    private User user;
+
+    private String userId;
 
     @ManyToOne
-    @JoinColumn(name="room_id", nullable=false)
-    private ChatRoom chatRoom;
+    private ChatRoom chatRoomId;
 
     @PrePersist
     void prePersist(){

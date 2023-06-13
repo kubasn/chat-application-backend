@@ -18,12 +18,6 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @GetMapping
-    public ResponseEntity getAllMessages(){
-        List <Message> messages = messageService.getAllMessages();
-        return ResponseEntity.ok(messages);
-    }
-
     @PostMapping
     public ResponseEntity sendMessage(@RequestBody Message message){
         Message sentMessage = messageService.sentMessage(message);

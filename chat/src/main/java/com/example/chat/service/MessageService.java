@@ -18,9 +18,6 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
-    public List<Message> getAllMessages(){
-        return messageRepository.findAll();
-    }
 
     public Message sentMessage(Message message) {
         return  messageRepository.save(message);

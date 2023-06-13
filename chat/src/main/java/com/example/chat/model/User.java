@@ -15,7 +15,6 @@ import java.util.Set;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
-
 public class User {
 
     @Id
@@ -34,7 +33,6 @@ public class User {
     @JoinColumn(name = "user_id")
     @ElementCollection
     @OnDelete(action = OnDeleteAction.CASCADE)
-
     private List<String> chatRooms = new ArrayList<>();
 
 

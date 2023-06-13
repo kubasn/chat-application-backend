@@ -1,6 +1,8 @@
 package com.example.chat.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "chat_rooms")
 @Data
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "roomId")
 @NoArgsConstructor
 public class ChatRoom {
     @Id
@@ -27,8 +30,7 @@ public class ChatRoom {
     private LocalDateTime creation_date;
 
 
-    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.EAGER)
-    private List<Message> messages;
+
 
     @CollectionTable(name = "user_chatroom",
             joinColumns = @JoinColumn(name = "room_id"))
@@ -39,6 +41,10 @@ public class ChatRoom {
 //    @OnDelete(action = OnDeleteAction.CASCADE)
 //    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     private List<String> users = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "chatRoomId")
+    private List<Message> messages = new ArrayList<>();
 
     @PrePersist
     void prePersist() {
