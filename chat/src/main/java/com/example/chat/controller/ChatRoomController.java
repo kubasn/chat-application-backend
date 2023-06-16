@@ -24,49 +24,64 @@ public class ChatRoomController {
 
     @GetMapping
     public ResponseEntity getAllChatRooms(){
-        List<ChatRoom> chatRooms = chatRoomService.getAllChatRooms();
-        return ResponseEntity.ok(chatRooms);
+        try {
+            List<ChatRoom> chatRooms = chatRoomService.getAllChatRooms();
+            return ResponseEntity.ok().body(chatRooms);
+        } catch(NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getChatRoomById(@PathVariable("id") String id) {
-        ChatRoom chatRoom = chatRoomService.getChatRoomById(id);
-        if (chatRoom != null) {
-            return ResponseEntity.ok(chatRoom);
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            ChatRoom chatRoom = chatRoomService.getChatRoomById(id);
+            return ResponseEntity.ok().body(chatRoom);
+        } catch(NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
     @PostMapping
     public ResponseEntity createChatRoom(@RequestBody ChatRoom chatRoom){
-        ChatRoom createdChatRoom = chatRoomService.createChatRoom(chatRoom);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdChatRoom);
+
+        try {
+            ChatRoom createdChatRoom = chatRoomService.createChatRoom(chatRoom);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdChatRoom);
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
     }
 
 
 
     @DeleteMapping("/{roomId}")
-    public ResponseEntity<Void> deleteChatRoom(@PathVariable String roomId){
-
-
-        boolean deleteChatRoom = chatRoomService.deleteChatRoom(roomId);
-        if(deleteChatRoom) {
-
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<String> deleteChatRoom(@PathVariable String roomId){
+        try {
+            chatRoomService.deleteChatRoom(roomId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ChatRoom> updateChatRoom(@PathVariable String id, @RequestBody ChatRoom chatRoom){
-        ChatRoom updatedChatRoom = chatRoomService.updateChatRoom(id,chatRoom);
-        if(updatedChatRoom != null){
-            return ResponseEntity.ok(updatedChatRoom);
-        } else {
-            return  ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateChatRoom(@PathVariable String id, @RequestBody ChatRoom chatRoom){
+        try {
+            ChatRoom updatedChatRoom = chatRoomService.updateChatRoom(id,chatRoom);
+            return ResponseEntity.ok().body(updatedChatRoom);
+        } catch(NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+
     }
 
 
@@ -87,9 +102,14 @@ public class ChatRoomController {
 
 
     @DeleteMapping("/{roomId}/users/{userId}")
-    public ResponseEntity removeUserFromChatRoom(@PathVariable String roomId, @PathVariable String userId){
-        chatRoomService.removeUserFromChatRoom(userId,roomId);
-        return ResponseEntity.ok().body("User with ID" + userId + " removed from ChatRoom with ID " + roomId);
+    public ResponseEntity<?> removeUserFromChatRoom(@PathVariable String roomId, @PathVariable String userId){
+        try {
+            chatRoomService.removeUserFromChatRoom(userId,roomId);
+            return ResponseEntity.ok().body("User with ID " + userId + " removed from ChatRoom with ID " + roomId);
+        } catch (NotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
-
 }

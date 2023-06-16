@@ -1,5 +1,6 @@
 package com.example.chat.controller;
 
+import com.example.chat.exception.BadRequestException;
 import com.example.chat.model.Message;
 import com.example.chat.service.MessageService;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,11 @@ public class MessageController {
 
     @PostMapping
     public ResponseEntity sendMessage(@RequestBody Message message){
-        Message sentMessage = messageService.sentMessage(message);
-        return ResponseEntity.status(HttpStatus.CREATED).body(sentMessage);
+        try {
+            Message sentMessage = messageService.sentMessage(message);
+            return ResponseEntity.status(HttpStatus.CREATED).body(sentMessage);
+        } catch(BadRequestException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }
